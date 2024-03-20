@@ -18,3 +18,6 @@ This is a simple web application that allows users to generate temporary email a
 4. Use the email address wherever temporary email is needed, such as signing up for online services.
 5. Check the application interface for any received emails.
 6. Emails will be automatically deleted after a certain period.
+
+## Project Link 
+ https://shozon-roy.github.io/temporary-email-genaretor/
