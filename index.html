@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Tempmail">
+<meta name="keywords" content="temporary email, disposable email, online verification, privacy">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TempMail Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .top-nav {
+    background-color: #00B28B;
+    color: white;
+    padding: 20px 20px; /* Adjusted padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .left-menu {
+    display: flex;
+    align-items: center;
+  }
+  .left-menu i {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  .right-icons {
+    display: flex;
+  }
+  .right-icons i {
+    font-size: 24px;
+    margin-left: 10px;
+  }
+  .premium-icon {
+    color: yellow; /* Changing premium icon color to yellow */
+  }
+  .bottom-nav {
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .bottom-nav a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+    position: relative;
+  }
+
+  .bottom-nav a i {
+    margin-bottom: 5px;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    text-align: center;
+    border-radius: 10px;
+    max-height: 80%;
+    overflow-y: auto;
+    animation: modalFadeIn 0.5s;
+  }
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .modal-content .fa-inbox {
+    font-size: 48px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  .modal-content p {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  .modal-content button {
+    background-color: #00B28B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .modal-content button:hover {
+    background-color: #009975;
+  }
+
+  .main-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 70px; /* Add margin to accommodate the fixed bottom navigation */
+  }
+  .refresh-icon {
+    margin-top: 20px; /* Added margin to separate the refresh icon from the text */
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #00B28B; /* Changed refresh icon color */
+  }
+  .refresh-text {
+    margin-left: 5px;
+    color: inherit; /* Inherit text color from parent */
+  }
+  .email-section {
+    width: 95%; /* Increased width to 95% */
+    max-width: 400px; /* Added max-width to prevent it from expanding too much on larger screens */
+    padding: 20px;
+    border: 1px solid #ccc; /* Adding border */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto; /* Centering the email section */
+  }
+  .email-logo {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+  .copy-button,
+  .edit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px; /* Increased padding for more height */
+    cursor: pointer;
+    width: 200px; /* Adjusted width */
+    border-radius: 5px;
+    margin-top: 10px; /* Added margin to separate buttons */
+    margin-right: 10px; /* Added right margin */
+    color: black; /* Set text color to black */
+  }
+  .copy-button i,
+  .edit-button i {
+    margin-right: 10px;
+  }
+  .copy-button {
+    border: 1px solid #00B28B; /* Added border with color #00B28B */
+  }
+  .edit-button {
+    background-color: #00B28B; /* Set background color to match navigation */
+    color: white; /* Set text color to white */
+    border: 1px solid #00B28B;
+  }
+  .centered-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="left-menu">
+    <i class="fas fa-bars"></i>
+    <span class="logo">TempMail</span>
+  </div>
+  <div class="right-icons">
+    <i class="fas fa-download"></i>
+    <i class="fas fa-crown premium-icon"></i> <!-- Adding premium-icon class -->
+  </div>
+</div>
+
+<div class="main-container">
+  <h1 id="temp-email">Your Temporary Email Address</h1>
+  <div class="refresh-icon" id="refresh-icon">
+    <i class="fas fa-sync-alt" style="color: #00B28B;"></i> <!-- Changing refresh icon color -->
+    <span class="refresh-text">Refresh</span> <!-- Adding text next to refresh icon -->
+  </div>
+  <!-- Your main content goes here -->
+</div>
+
+<div class="email-section">
+  <i class="far fa-envelope email-logo"></i>
+  <h2 id="new-email">Your Email</h2>
+</div>
+
+<div class="email-buttons">
+  <div class="centered-div"> <!-- Centered div for buttons -->
+    <div class="copy-button" id="copy-button">
+      <i class="far fa-copy"></i>
+      <span>Copy</span>
+    </div>
+    <div class="edit-button" id="edit-button">
+      <i class="fas fa-pen"></i>
+      <span>Edit</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="bottom-nav">
+  <a href="#" class="active">
+    <i class="fas fa-envelope"></i>
+    <span>Email Address</span>
+  </a>
+  <a href="#" id="inbox-link">
+    <i class="fas fa-inbox"></i>
+    <span>Inbox</span>
+    <span class="indicator" id="inbox-indicator"></span>
+  </a>
+  <a href="#" id="switch-email-link">
+    <i class="fas fa-exchange-alt"></i>
+    <span>Switch Email</span>
+  </a>
+</div>
+<!-- 
+<div class="dev-alert">
+  @Code created by Shozon Roy. This work is protected by copyright law and international treaties. Unauthorized reproduction, distribution, or modification is strictly prohibited. For licensing inquiries or custom development services, please contact the creator. All rights reserved.
+</div>  -->
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <i class="fas fa-inbox" style="font-size: 48px; color: #333;"></i>
+  
+    <p>Inbox is empty</p>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" charset="utf-8">
+// JavaScript code to handle refresh icon and text change
+const refreshIcon = document.getElementById('refresh-icon');
+const newEmailText = document.getElementById('new-email');
+const copyButton = document.getElementById('copy-button');
+const editButton = document.getElementById('edit-button');
+
+// Array of first names
+
+
+const firstNames = [
+  "John", "Jane", "Michael", "Emily", "William", "Sophia", "Daniel", "Olivia", "James", "Isabella",
+  "David", "Emma", "Benjamin", "Ava", "Alexander", "Mia", "Matthew", "Charlotte", "Ethan", "Amelia",
+  "Liam", "Abigail", "Jacob", "Grace", "Ryan", "Chloe", "Noah", "Ella", "Logan", "Anna",
+  "Lucas", "Madison", "Jackson", "Evelyn", "Gabriel", "Harper", "Samuel", "Avery", "Joseph", "Scarlett",
+  "Carter", "Lily", "Jayden", "Eleanor", "Christopher", "Aria", "Luke", "Nora", "Henry", "Addison",
+  "Dylan", "Aubrey", "Nathan", "Ellie", "Isaac", "Hannah", "Andrew", "Elizabeth", "Joshua", "Zoe",
+  "Nicholas", "Penelope", "Caleb", "Leah", "Eli", "Grace", "Hunter", "Victoria", "Connor", "Stella",
+  "Aaron", "Violet", "Christian", "Mila", "Adrian", "Hazel", "Evan", "Natalie", "Jonathan", "Aurora",
+  "Thomas", "Samantha", "Wyatt", "Audrey", "Jack", "Bella", "Luke", "Claire", "Julian", "Lucy",
+  "Owen", "Lillian", "Isaiah", "Maya", "Charles", "Nora", "Josiah", "Elena", "Levi", "Paisley",
+  "Xavier", "Alice", "Nathaniel", "Elise", "Grayson", "Sarah", "Ezra", "Haley", "Lincoln", "Emery",
+  "Hudson", "Katherine", "Jaxon", "Julia", "Asher", "Madeline", "Leo", "Alexandra", "Sebastian", "Taylor",
+  "Elias", "Brianna", "Cameron", "Lauren", "Xander", "Layla", "Caleb", "Kayla", "Dominic", "Caroline",
+  "Blake", "Annabelle", "Adam", "Sophie", "Theodore", "Sadie", "Ian", "Gabriella", "Easton", "Riley",
+  "Cooper", "Aaliyah", "Carson", "Alexa", "Chase", "Hannah", "Antonio", "Alyssa", "Axel", "Mackenzie",
+  "Parker", "Hailey", "Jordan", "Peyton", "Jason", "Zoey", "Miles", "Gianna", "Vincent", "Kylie",
+  "Wesley", "Rebecca", "Adam", "Eva", "Colin", "Maria", "Harrison", "Clara", "Weston", "Faith",
+  "Kai", "Vivian", "Tristan", "Madelyn", "Bennett", "Isabelle", "Paul", "Eleanor", "Kyle", "Amaya",
+  "Brian", "Brooklyn", "Matteo", "Emilia", "Eduardo", "Eliana", "Cole", "Leilani", "Maxwell", "Adeline",
+  "Landon", "Mary", "Axel", "Naomi", "Jace", "Ariana", "Arthur", "Evelyn", "Louis", "Jasmine",
+  "Beckett", "Aria", "Finn", "Valeria", "Roman", "Valentina", "Julius", "Sophia", "Hugo", "Anastasia",
+  "Jayce", "Diana", "Ezekiel", "Amanda", "Elliot", "Jocelyn", "Derek", "Summer", "Damian", "Alexis",
+  "Silas", "Kate", "Ryder", "Angelina", "Waylon", "Delilah", "Giovanni", "Bianca", "Angelo", "Evangeline",
+  "Brandon", "Isabel", "Jonah", "Savannah", "Graham", "Lydia", "Griffin", "Nova", "Emmett", "Violet",
+  "Malachi", "Sophie", "Tucker", "Reese", "Rhett", "Eliza", "Remington", "Gabrielle", "Maximus", "Ruby",
+  "Kingston", "Leah", "Chance", "Luna", "Zane", "Daniela", "Emilio", "Olive", "Gunner", "Serena",
+  "Leonardo", "Isabela", "Jasper", "Adriana", "Knox", "Brielle", "Rylan", "Danielle", "Zayden", "Adeline",
+  "Hayden", "Gabriela", "Bryson", "Delaney", "Caden", "Lyla", "Emmanuel", "Jennifer", "Kian", "Aurora",
+  "Archer", "Mariana", "Bryce", "Athena", "Luca", "Georgia", "Diego", "Megan", "Felix", "Valerie",
+  "Bobby", "Vanessa", "Brady", "Melody", "Abel", "Ivy", "Dawson", "Penelope", "Peter", "Alice",
+  "Elian",
+];
+
+// Function to generate a random email address
+const generateRandomEmail = () => {
+  // Generate a random first name from the array
+  const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  // Generate a random domain from the provided array
+  const randomDomain = additionalDomains[Math.floor(Math.random() * additionalDomains.length)];
+  // Combine the random first name with the random domain
+  const randomEmail = randomFirstName.toLowerCase() + randomDomain;
+  return randomEmail;
+};
+
+// Array of additional email domains
+const additionalDomains = [
+  '@mymailtemp.com',
+  '@rapidinbox.com',
+  '@swiftmailgen.com',
+  '@temporaryinbox.net',
+  '@disposablemails.com',
+  '@temporaryinbox.xyz',
+  '@quicktempmail.com',
+  '@throwawaymailz.com',
+  '@ephemeralmails.com',
+  '@temporarymailbox.net',
+  '@swiftinbox.com',
+  '@transientinbox.com',
+  '@rapidmailgen.com',
+  '@temporarymailgen.com',
+  '@tempmailhub.net',
+  '@blinkmailgen.com',
+  '@swiftmailgen.net',
+  '@disposableinbox.xyz',
+  '@quicktempmail.net',
+  '@transientmails.net',
+  '@rapidinbox.net',
+  '@trashmailgen.net',
+  '@throwawayinbox.net',
+  '@ephemeralmailgen.com',
+  '@temporarymailgen.net',
+  '@mymailtemp.net',
+  '@transitoryinbox.com',
+  '@tempinboxgen.com',
+  '@blinkinbox.net',
+  '@rapidmailgen.net',
+  '@swifttempmail.com',
+  '@transientinbox.net',
+  '@disposablemailhub.com',
+  '@quickinboxgen.com',
+  '@ephemeralmailhub.com',
+  '@temporarymailhub.net',
+  '@tempmailgen.xyz',
+  '@throwawayinbox.xyz',
+  '@ephemeralinbox.net',
+  '@transitorymail.net',
+  '@rapidtempmail.com',
+  '@transientmailgen.com',
+  '@temporarymailbox.xyz',
+  '@blinkmailgen.net',
+  '@disposablemailz.net',
+  '@quicktempmail.net',
+  '@ephemeralmails.net',
+  '@swiftinboxgen.com',
+  '@transientinboxgen.com',
+  '@trashmailhub.com',
+  '@throwawaymailhub.com',
+  '@temporaryinboxgen.com'
+];
+
+refreshIcon.addEventListener('click', () => {
+  // Generate a random email address
+  const randomEmail = generateRandomEmail();
+  // Set the text content of the new email address element
+  newEmailText.textContent = randomEmail;
+});
+
+copyButton.addEventListener('click', () => {
+  const tempEmail = document.createElement('textarea');
+  tempEmail.value = newEmailText.textContent;
+  document.body.appendChild(tempEmail);
+  tempEmail.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempEmail);
+  alert('Email copied to clipboard');
+});
+
+editButton.addEventListener('click', () => {
+  // Add functionality for the edit button here
+  alert('Edit button clicked');
+});
+ // Simulate unseen message by displaying the indicator
+  document.getElementById('inbox-indicator').style.display = 'inline';
+
+  // Get the modal
+  var modal = document.getElementById("myModal");
+
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // Function to open the modal
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  // Event listener for the "Inbox" link
+  document.getElementById('inbox-link').addEventListener('click', openModal);
+
+  // Function to show a popup message
+  function showPopupMessage() {
+    alert('This feature is unavailable right now');
+  }
+
+  // Event listener for the "Switch Email" link
+  document.getElementById('switch-email-link').addEventListener('click', showPopupMessage);
+</script>
+</body>
+</html>
